@@ -1,26 +1,29 @@
-import time
-from typing import Any, Dict, List, Optional
 import asyncio
-import logging
 import functools
+import logging
+import os
+import time
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
 from code_context_analyzer.repo_system import RepositorySession
 from mcp.server.fastmcp import Context, FastMCP
 
 from utils.analyzer import CustomAnalyzer
-from utils.enhancher import AIEnhancer
 from utils.cache import AnalysisCache
+from utils.enhancer import AIEnhancer
 from utils.settings import DEFAULT_CONFIG
-import os
-
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Create an MCP server
-mcp = FastMCP(name="Code Context Analyzer (CCA)", host="127.0.0.1", port=8000)
+mcp = FastMCP(
+    name="Code Context Analyzer (CCA)",
+    host=DEFAULT_CONFIG["server_host"],
+    port=DEFAULT_CONFIG["server_port"],
+)
 
 # Initialize cache
 cache = AnalysisCache()
@@ -34,15 +37,15 @@ class AnalysisType(Enum):
 
 @mcp.tool()
 async def analyze_repository(
-        repo_url: str,
-        branch: str = "main",
-        max_files: int = 1000,
-        ignore_tests: bool = True,
-        ignore_patterns: List[str] = [],
-        use_cache: bool = True,
-        enhance_with_ai: bool = True,
-        model: str = DEFAULT_CONFIG["model"],
-        ctx: Context = None,
+    repo_url: str,
+    branch: str = "main",
+    max_files: int = 1000,
+    ignore_tests: bool = True,
+    ignore_patterns: List[str] = [],
+    use_cache: bool = True,
+    enhance_with_ai: bool = True,
+    model: str = DEFAULT_CONFIG["model"],
+    ctx: Context = None,
 ) -> Dict[str, Any]:
     """
     Analyze a complete repository to provide structured context for AI assistants.
@@ -106,12 +109,12 @@ async def analyze_repository(
 
 @mcp.tool()
 async def analyze_directory(
-        repo_url: str,
-        directory_path: str,
-        branch: str = "main",
-        max_depth: int = 3,
-        ignore_patterns: Optional[List[str]] = None,
-        ctx: Context = None,
+    repo_url: str,
+    directory_path: str,
+    branch: str = "main",
+    max_depth: int = 3,
+    ignore_patterns: Optional[List[str]] = None,
+    ctx: Context = None,
 ) -> Dict[str, Any]:
     """
     Analyze a specific directory within a repository.
@@ -126,13 +129,14 @@ async def analyze_directory(
     """
 
     try:
-        await ctx.report_progress(0, 100, f"Starting directory analysis: {directory_path}")
+        await ctx.report_progress(
+            0, 100, f"Starting directory analysis: {directory_path}"
+        )
         with RepositorySession(repo_url, branch) as session:
             await ctx.report_progress(30, 100, "Analyzing directory structure")
 
             tg_path = os.path.join(session.path, directory_path)
-            await ctx.report_progress(40, 100,
-                                      f"Analyzing directory >> {tg_path}")
+            await ctx.report_progress(40, 100, f"Analyzing directory >> {tg_path}")
             analyzer = CustomAnalyzer(
                 tg_path,
                 max_files=500,  # Lower limit for directory analysis
@@ -156,9 +160,9 @@ async def analyze_directory(
 
 @mcp.tool()
 async def get_repository_overview(
-        repo_url: str,
-        branch: str = "main",
-        ctx: Context = None,
+    repo_url: str,
+    branch: str = "main",
+    ctx: Context = None,
 ) -> Dict[str, Any]:
     """
     Get a high-level overview of a repository without detailed analysis.
@@ -190,8 +194,8 @@ async def get_repository_overview(
 
 @mcp.tool()
 async def clear_cache(
-        repo_url: Optional[str] = None,
-        ctx: Context = None,
+    repo_url: Optional[str] = None,
+    ctx: Context = None,
 ) -> Dict[str, Any]:
     """
     Clear cached analysis results.
@@ -215,5 +219,5 @@ async def clear_cache(
 
 
 if __name__ == "__main__":
-    transport = "streamable-http"
+    transport = DEFAULT_CONFIG["transport"]
     mcp.run(transport=transport)

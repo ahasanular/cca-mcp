@@ -1,5 +1,6 @@
 import time
 from typing import Any, Dict, Optional
+
 from utils.settings import DEFAULT_CONFIG
 
 
@@ -27,8 +28,7 @@ class AnalysisCache:
         """Set item in cache with timestamp."""
         # Check cache size and remove oldest if needed
         if len(self.cache) >= self.config["max_cache_size"]:
-            oldest_key = min(self.timestamps.keys(),
-                             key=lambda k: self.timestamps[k])
+            oldest_key = min(self.timestamps.keys(), key=lambda k: self.timestamps[k])
             self.delete(oldest_key)
 
         self.cache[key] = value
@@ -45,8 +45,7 @@ class AnalysisCache:
         """Clear all cache entries for a repository."""
         count = 0
         keys_to_delete = [
-            key for key in self.cache.keys()
-            if key.startswith(f"{repo_url}:")
+            key for key in self.cache.keys() if key.startswith(f"{repo_url}:")
         ]
 
         for key in keys_to_delete:

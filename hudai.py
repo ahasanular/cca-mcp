@@ -2,7 +2,7 @@ import datetime
 
 from markdown_it.common.html_re import processing
 
-from utils.enhancher import AIEnhancer
+from utils.enhancer import AIEnhancer
 
 report = {
 "heading":

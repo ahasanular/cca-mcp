@@ -3,6 +3,7 @@ import os
 from typing import Any, Dict, List, Optional
 
 from code_context_analyzer.analyzer import Analyzer
+
 from utils.formatter import CustomFormatter
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ class CustomAnalyzer(Analyzer):
             doc_chars=self.doc_chars,
         )
 
-    def run_analysis(self, path:str = None) -> Dict[str, Any]:
+    def run_analysis(self, path: str = None) -> Dict[str, Any]:
         """Run analysis with enhanced filtering and error handling."""
         if not path:
             path = self.path
@@ -30,7 +31,8 @@ class CustomAnalyzer(Analyzer):
 
             result = super().run_analysis(path)
             logger.info(
-                f"Analysis completed. Files processed: {len(result) if result else 0}")
+                f"Analysis completed. Files processed: {len(result) if result else 0}"
+            )
             return result
         except Exception as e:
             logger.error(f"Analysis failed: {str(e)}")

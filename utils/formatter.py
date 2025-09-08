@@ -1,8 +1,10 @@
 import logging
 from typing import Any, Dict, List
+
 from code_context_analyzer.formatters.default import LegacyCodeFormatter
 
 logger = logging.getLogger(__name__)
+
 
 class CustomFormatter(LegacyCodeFormatter):
     def format(self, parsed_data: List[Dict[str, Any]]) -> Dict[str, str]:
@@ -13,7 +15,7 @@ class CustomFormatter(LegacyCodeFormatter):
                 "heading": "No Data",
                 "tree": "No directory structure available",
                 "details": "No code details available",
-                "full": "No data to generate report"
+                "full": "No data to generate report",
             }
 
         self.parsed_data = parsed_data
@@ -28,7 +30,9 @@ class CustomFormatter(LegacyCodeFormatter):
 
         # Apply truncation if needed
         if self.truncate_total and len(full_report) > self.truncate_total:
-            logger.warning(f"Report truncated from {len(full_report)} to {self.truncate_total} characters")
+            logger.warning(
+                f"Report truncated from {len(full_report)} to {self.truncate_total} characters"
+            )
             allowed_length = self.truncate_total
             truncated_report = (
                 full_report[:allowed_length] + "\n\n... (truncated due to length)"
@@ -39,13 +43,13 @@ class CustomFormatter(LegacyCodeFormatter):
                 "details": description,
                 "full": truncated_report,
                 "truncated": True,
-                "original_length": len(full_report)
+                "original_length": len(full_report),
             }
 
         return {
-            "heading": heading, 
-            "tree": tree, 
+            "heading": heading,
+            "tree": tree,
             "details": description,
             "full": full_report,
-            "truncated": False
+            "truncated": False,
         }

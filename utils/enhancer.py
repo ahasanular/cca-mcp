@@ -60,7 +60,7 @@ class AIEnhancer:
                 last_exc = exc
                 attempt += 1
                 if attempt <= self.retries:
-                    wait_for = (self.retry_backoff ** attempt)
+                    wait_for = self.retry_backoff**attempt
                     logger.warning(
                         # "AIEnhancer attempt %d/%d failed: %s — retrying in %.1fs",
                         str(exc),
